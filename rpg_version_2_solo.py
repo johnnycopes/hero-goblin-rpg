@@ -37,7 +37,6 @@ class Character(object):
             else:
                 print "%s is still sleeping" % self.name
 
-
     def attack(self, enemy):
         if not self.alive():
             return
@@ -60,7 +59,6 @@ class Character(object):
 
     def print_status(self):
         print "%s has %d health and %d power." % (self.name, self.health, self.power)
-
 
 
 # Our Hero!
