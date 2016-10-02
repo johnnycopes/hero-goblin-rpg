@@ -13,50 +13,68 @@ class Character(object):
         self.name = '<undefined>'
         self.health = 10
         self.power = 5
+        self.speed = 4
         self.coins = 20
 
     def alive(self):
         return self.health > 0
+
+    def faster(self, enemy):
+        return self.speed > enemy.speed
+
+    def much_faster(self, enemy):
+        return self.speed >= enemy.speed * 2
 
     def attack(self, enemy):
         if not self.alive():
             return
         print "%s attacks %s" % (self.name, enemy.name)
         enemy.receive_damage(self.power)
-        time.sleep(1.5)
+        if self.much_faster(enemy):
+            print "The %s is much quicker than the %s and strikes again!" % (self.name, enemy.name)
+            enemy.receive_damage(self.power)
+        time.sleep(2)
 
     def receive_damage(self, points):
         self.health -= points
-        print "%s received %d damage." % (self.name, points)
-        if self.health <= 0:
+        print "%s receives %d damage." % (self.name, points)
+        if not self.alive():
             print "%s is dead." % self.name
+
+
 
     def print_status(self):
         print "%s has %d health and %d power." % (self.name, self.health, self.power)
+
 
 
 # Our Hero!
 
 class Hero(Character):
     def __init__(self):
-        self.name = 'hero'
+        self.name = 'Hero'
         self.health = 10
         self.power = 5
+        self.speed = 5
         self.coins = 20
 
     def attack(self, enemy):
         double_damage = random.random() < 0.2
         if double_damage:
-            print "Hero lands a critical hit!"
             self.power *= 2
+            print "The %s's weapon glows bright!" % self.name
         super(Hero, self).attack(enemy)
         if double_damage:
             self.power /= 2
 
+    # Hero wins speed ties
+    def faster(self, enemy):
+        return self.speed >= enemy.speed
+
     def restore(self):
         self.health = 10
-        print "Hero's heath is restored to %d!" % self.health
-        time.sleep(1)
+        print "%s's heath is restored to %d!" % (self.name, self.health)
+        time.sleep(2)
 
     def buy(self, item):
         self.coins -= item.cost
@@ -67,24 +85,63 @@ class Hero(Character):
 
 class Goblin(Character):
     def __init__(self):
-        self.name = 'goblin'
+        self.name = 'Goblin'
         self.health = 6
+        self.speed = 4
         self.power = 2
 
-class Goblin(Character):
+
+class Medic(Character):
     def __init__(self):
-        self.name = 'goblin'
-        self.health = 6
-        self.power = 2
+        self.name = 'Medic'
+        self.health = 12
+        self.speed = 4
+        self.power = 1
+
+    def receive_damage(self, points):
+        super(Medic, self).receive_damage(points)
+        if self.alive():
+            recuperate = random.random() < 0.6
+            if recuperate:
+                print "Medic recuperated 2 health points"
+                self.health += 2
+
+
+class Shadow(Character):
+    def __init__(self):
+        self.name = 'Shadow'
+        self.health = 1
+        self.speed = 9
+        self.power = 1
+
+    def receive_damage(self, points):
+        evade = random.random() < 0.9
+        if evade:
+            print "%s evades the attack!" % self.name
+        else:
+            super(Shadow, self).receive_damage(points)
+
+
+class Zombie(Character):
+    def __init__(self):
+        self.name = 'Zombie'
+        self.health = 4
+        self.speed = 1
+        self.power = 1
+
+    def alive(self):
+        return True
+
 
 class Wizard(Character):
     def __init__(self):
-        self.name = 'wizard'
+        self.name = 'Wizard'
         self.health = 8
+        self.speed = 3
         self.power = 1
 
     def attack(self, enemy):
-        swap_power = random.random() > 0.5
+        swap_power = random.random() < 0.5
         if swap_power:
             print "%s swaps power with %s during attack" % (self.name, enemy.name)
             self.power, enemy.power = enemy.power, self.power
@@ -103,7 +160,7 @@ class Battle(object):
         while hero.alive() and enemy.alive():
             hero.print_status()
             enemy.print_status()
-            time.sleep(1.5)
+            time.sleep(2)
             print "-----------------------"
             print "What do you want to do?"
             print "1. fight %s" % enemy.name
@@ -112,7 +169,10 @@ class Battle(object):
             print "> ",
             input = int(raw_input())
             if input == 1:
-                hero.attack(enemy)
+                if hero.faster(enemy):
+                    hero.attack(enemy)
+                else:
+                    enemy.attack(hero)
             elif input == 2:
                 pass
             elif input == 3:
@@ -121,7 +181,10 @@ class Battle(object):
             else:
                 print "Invalid input %r" % input
                 continue
-            enemy.attack(hero)
+            if not enemy.faster(hero):
+                enemy.attack(hero)
+            else:
+                hero.attack(enemy)
         if hero.alive():
             print "You defeated the %s" % enemy.name
             return True
@@ -177,7 +240,7 @@ class Store(object):
 # Declarations and bird's eye view of game
 
 hero = Hero()
-enemies = [Goblin(), Wizard()]
+enemies = [Zombie(), Shadow(), Medic(), Goblin(), Wizard()]
 battle_engine = Battle()
 shopping_engine = Store()
 
