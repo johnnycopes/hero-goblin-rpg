@@ -14,10 +14,14 @@ class Character(object):
         self.health = 10
         self.power = 5
         self.speed = 4
+        self.asleep = False
         self.coins = 20
 
     def alive(self):
         return self.health > 0
+
+    def asleep(self):
+        return self.asleep
 
     def faster(self, enemy):
         return self.speed > enemy.speed
@@ -28,11 +32,15 @@ class Character(object):
     def attack(self, enemy):
         if not self.alive():
             return
-        print "%s attacks %s" % (self.name, enemy.name)
-        enemy.receive_damage(self.power)
-        if self.much_faster(enemy):
-            print "The %s is much quicker than the %s and strikes again!" % (self.name, enemy.name)
+        # changing this to 'if self.asleep:' makes both characters sleep no matter what. why?
+        if self.asleep == True:
+            print "%s is asleep and can't attack this round" % self.name
+        else:
+            print "%s attacks %s" % (self.name, enemy.name)
             enemy.receive_damage(self.power)
+            if self.much_faster(enemy):
+                print "The %s is much quicker than the %s and strikes again!" % (self.name, enemy.name)
+                enemy.receive_damage(self.power)
         time.sleep(2)
 
     def receive_damage(self, points):
@@ -40,8 +48,6 @@ class Character(object):
         print "%s receives %d damage." % (self.name, points)
         if not self.alive():
             print "%s is dead." % self.name
-
-
 
     def print_status(self):
         print "%s has %d health and %d power." % (self.name, self.health, self.power)
@@ -91,19 +97,31 @@ class Goblin(Character):
         self.power = 2
 
 
+class Jigglypuff(Character):
+    def __init__(self):
+        self.name = 'Jigglypuff'
+        self.heatlh = 7
+        self.power = 1
+
+    def attack(self, enemy):
+        print "Jigglypuff is singing!"
+        print "JIIIIIIGUHLYY PUUUF LA LA LAAA"
+        sedate = random.random() < 0.7
+
+
 class Medic(Character):
     def __init__(self):
         self.name = 'Medic'
-        self.health = 12
+        self.health = 11
         self.speed = 4
-        self.power = 1
+        self.power = 2
 
     def receive_damage(self, points):
         super(Medic, self).receive_damage(points)
         if self.alive():
-            recuperate = random.random() < 0.6
+            recuperate = random.random() < 0.4
             if recuperate:
-                print "Medic recuperated 2 health points"
+                print "Medic recuperated 4 health points"
                 self.health += 2
 
 
