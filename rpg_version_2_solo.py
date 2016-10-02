@@ -106,6 +106,24 @@ class Goblin(Character):
         self.power = 2
 
 
+class Harambe(Character):
+    def __init__(self):
+        self.name = 'Harambe'
+        self.health = 15
+        self.speed = 6
+        self.power = 3
+
+    def attack(self, enemy):
+        hyped_up = random.random() < .3
+        if hyped_up:
+            self.power *= 2
+            self.speed *= 1.5
+        super(Hero, self).attack(enemy)
+        if hyped_up:
+            self.power /= 2
+            self.speed /= 1.5
+
+
 class Jigglypuff(Character):
     def __init__(self):
         self.name = 'Jigglypuff'
@@ -281,7 +299,7 @@ class Store(object):
 # Declarations and bird's eye view of game
 
 hero = Hero()
-enemies = [Jigglypuff(), Zombie(), Shadow(), Medic(), Goblin(), Wizard()]
+enemies = [Harambe(), Jigglypuff(), Zombie(), Shadow(), Medic(), Goblin(), Wizard()]
 battle_engine = Battle()
 shopping_engine = Store()
 
