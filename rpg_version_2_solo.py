@@ -114,11 +114,12 @@ class Harambe(Character):
         self.power = 3
 
     def attack(self, enemy):
-        hyped_up = random.random() < .3
+        hyped_up = random.random() < 0.3
         if hyped_up:
+            print "Harambe is getting hyped up!"
             self.power *= 2
             self.speed *= 1.5
-        super(Hero, self).attack(enemy)
+        super(Harambe, self).attack(enemy)
         if hyped_up:
             self.power /= 2
             self.speed /= 1.5
@@ -293,13 +294,19 @@ class Store(object):
             else:
                 ItemToBuy = Store.items[input - 1]
                 item = ItemToBuy()
-                hero.buy(item)
+                if hero.coins >= item.cost:
+                    hero.buy(item)
+                    time.sleep(2)
+                else:
+                    print "Not enough coins to purchase this"
+                    time.sleep(2)
+
 
 
 # Declarations and bird's eye view of game
 
 hero = Hero()
-enemies = [Harambe(), Jigglypuff(), Zombie(), Shadow(), Medic(), Goblin(), Wizard()]
+enemies = [Harambe(), Jigglypuff(), Shadow(), Medic(), Goblin(), Wizard()]
 battle_engine = Battle()
 shopping_engine = Store()
 
