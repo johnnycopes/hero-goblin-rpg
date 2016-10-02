@@ -6,7 +6,7 @@ import time
 
 
 # Character template
-# is it at all necessary to include the def __init__ attributes?
+# is it at all necessary to include the def __init__ attributes? ########################## <----------------
 
 class Character(object):
     def __init__(self):
@@ -29,10 +29,19 @@ class Character(object):
     def much_faster(self, enemy):
         return self.speed >= enemy.speed * 2
 
+    def wake_up(self):
+        if self.asleep == True:
+            if random.random() < 0.5:
+                print "%s wakes up" % self.name
+                self.asleep = False
+            else:
+                print "%s is still sleeping" % self.name
+
+
     def attack(self, enemy):
         if not self.alive():
             return
-        # changing this to 'if self.asleep:' makes both characters sleep no matter what. why?
+        # changing this to 'if self.asleep:' makes both characters sleep no matter what. why? ########################## <----------------
         if self.asleep == True:
             print "%s is asleep and can't attack this round" % self.name
         else:
@@ -100,13 +109,23 @@ class Goblin(Character):
 class Jigglypuff(Character):
     def __init__(self):
         self.name = 'Jigglypuff'
-        self.heatlh = 7
+        self.health = 7
+        self.speed = 3
         self.power = 1
 
     def attack(self, enemy):
+        if not self.alive():
+            return
+        # I want to add a condition where Jigglypuff won't sing if the enemy is asleep, but it ignores enemy.asleep here ########################## <----------------
         print "Jigglypuff is singing!"
         print "JIIIIIIGUHLYY PUUUF LA LA LAAA"
-        sedate = random.random() < 0.7
+        sedate = random.random() < 0.8
+        if sedate:
+            print "The %s is serenaded to sleep!" % enemy.name
+            enemy.asleep = True
+        else:
+            print "The sweet tune has no effect"
+        super(Jigglypuff, self).attack(enemy)
 
 
 class Medic(Character):
@@ -176,9 +195,11 @@ class Battle(object):
         print "Hero faces the %s" % enemy.name
         print "====================="
         while hero.alive() and enemy.alive():
-            hero.print_status()
-            enemy.print_status()
+
+            hero.wake_up()
+            enemy.wake_up()
             time.sleep(2)
+
             print "-----------------------"
             print "What do you want to do?"
             print "1. fight %s" % enemy.name
@@ -186,6 +207,7 @@ class Battle(object):
             print "3. flee"
             print "> ",
             input = int(raw_input())
+
             if input == 1:
                 if hero.faster(enemy):
                     hero.attack(enemy)
@@ -203,6 +225,7 @@ class Battle(object):
                 enemy.attack(hero)
             else:
                 hero.attack(enemy)
+
         if hero.alive():
             print "You defeated the %s" % enemy.name
             return True
@@ -258,7 +281,7 @@ class Store(object):
 # Declarations and bird's eye view of game
 
 hero = Hero()
-enemies = [Zombie(), Shadow(), Medic(), Goblin(), Wizard()]
+enemies = [Jigglypuff(), Zombie(), Shadow(), Medic(), Goblin(), Wizard()]
 battle_engine = Battle()
 shopping_engine = Store()
 
