@@ -4,6 +4,10 @@ Added a store. The hero can now buy a tonic or a sword. A tonic will add 2 to th
 import random
 import time
 
+
+# Character template
+# is it at all necessary to include the def __init__ attributes?
+
 class Character(object):
     def __init__(self):
         self.name = '<undefined>'
@@ -30,12 +34,24 @@ class Character(object):
     def print_status(self):
         print "%s has %d health and %d power." % (self.name, self.health, self.power)
 
+
+# Our Hero!
+
 class Hero(Character):
     def __init__(self):
         self.name = 'hero'
         self.health = 10
         self.power = 5
         self.coins = 20
+
+    def attack(self, enemy):
+        double_damage = random.random() < 0.2
+        if double_damage:
+            print "Hero lands a critical hit!"
+            self.power *= 2
+        super(Hero, self).attack(enemy)
+        if double_damage:
+            self.power /= 2
 
     def restore(self):
         self.health = 10
@@ -45,6 +61,15 @@ class Hero(Character):
     def buy(self, item):
         self.coins -= item.cost
         item.apply(hero)
+
+
+# The baddies
+
+class Goblin(Character):
+    def __init__(self):
+        self.name = 'goblin'
+        self.health = 6
+        self.power = 2
 
 class Goblin(Character):
     def __init__(self):
@@ -66,6 +91,9 @@ class Wizard(Character):
         super(Wizard, self).attack(enemy)
         if swap_power:
             self.power, enemy.power = enemy.power, self.power
+
+
+# The battle
 
 class Battle(object):
     def do_battle(self, hero, enemy):
@@ -101,6 +129,9 @@ class Battle(object):
             print "YOU LOSE!"
             return False
 
+
+# Items for sale
+
 class Tonic(object):
     cost = 5
     name = 'tonic'
@@ -114,6 +145,9 @@ class Sword(object):
     def apply(self, hero):
         hero.power += 2
         print "%s's power increased to %d." % (hero.name, hero.power)
+
+
+# The store
 
 class Store(object):
     # If you define a variable in the scope of a class:
@@ -138,6 +172,9 @@ class Store(object):
                 ItemToBuy = Store.items[input - 1]
                 item = ItemToBuy()
                 hero.buy(item)
+
+
+# Declarations and bird's eye view of game
 
 hero = Hero()
 enemies = [Goblin(), Wizard()]
