@@ -7,54 +7,70 @@ In this simple RPG game, the hero fights the goblin. He has the options to:
 
 """
 
-class Hero(object):
+class Character(object):
+
+    # I don't understand slide 29 from Friday -- "calls internally"
+    # is there any point in initailizing attributes on the main character class since they get defined later?
+    def attack(self, enemy):
+        enemy.health -= self.power
+        print "The %s does %d damage to the %s." % (self.name, self.power, enemy.name)
+        if not enemy.alive():
+            print "The %s is dead." % enemy.name
+
+    def alive(self):
+        return self.health > 0
+
+    def print_status(self):
+        print "The %s has %d health and %d power." % (self.name, self.health, self.power)
+
+
+class Hero(Character):
 
     # difference between class-level attributes/instance-level attributes?
     legs = 2
     def __init__(self):
+        self.name = "hero"
         self.health = 10
         self.power = 5
 
-    def attack(self, goblin):
-        goblin.health -= self.power
-        print "The hero does %d damage to the goblin." % self.power
-        if goblin.health <= 0:
-            print "The goblin is dead."
 
-
-class Goblin(object):
+class Goblin(Character):
 
     legs = 3
     def __init__(self):
+        self.name = "goblin"
         self.health = 6
         self.power = 2
 
-    def attack(self, hero):
-        hero.health -= self.power
-        print "The goblin does %d damage to the hero." % self.power
-        if hero.health <= 0:
-            print "The hero is dead."
 
+class Zombie(Character):
 
+    def __init__(self):
+        self.name = "zombie"
+        self.health = 4
+        self.power = 1
+
+    def alive(self):
+        return True
+        print alive()
 
 
 hero = Hero()
-goblin = Goblin()
+monster = Goblin()
 
 
-while goblin.health > 0 and hero.health > 0:
-    print "You have %d health and %d power." % (hero.health, hero.power)
-    print "The goblin has %d health and %d power." % (goblin.health, goblin.power)
-    print
+while monster.alive() and hero.alive():
+    hero.print_status()
+    monster.print_status()
     print "What do you want to do?"
-    print "1. fight goblin"
+    print "1. fight %s" % monster.name
     print "2. do nothing"
     print "3. flee"
     print "> ",
     input = raw_input()
     if input == "1":
-        # Hero attacks goblin
-        hero.attack(goblin)
+        # Hero attacks monster
+        hero.attack(monster)
     elif input == "2":
         pass
     elif input == "3":
@@ -63,6 +79,6 @@ while goblin.health > 0 and hero.health > 0:
     else:
         print "Invalid input %r" % input
 
-    if goblin.health > 0:
-        # Goblin attacks hero
-        goblin.attack(hero)
+    if monster.alive():
+        # Monster attacks hero
+        monster.attack(hero)
