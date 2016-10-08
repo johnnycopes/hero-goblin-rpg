@@ -18,12 +18,12 @@ There were a were a wide variety of assigned challenges to take on, including: a
 
 Although I was familiar with the concept and utility of classes from online courses I'd taken learning about the object prototype in JavaScript, this was the first time I'd ever tried to implement them in a real program. It took me a while to get the hang of the program flow, but once I did I still ran into a lot of problems both when I was working with a partner and later when adding things on my own:
 
-_the 'asleep' attribute_
+****_the 'asleep' attribute_****
 One of the new enemies my partner and I came up with to include was Jigglypuff, a classic character from the Pokémon series who can serenade its opponents with a siren song. We wanted to include this ability to put our Hero to sleep and cause them to miss their next chance to attack. Our original solution was to give the Hero include an attribute called 'asleep' set to 'False' and then customize Jigglypuff's attack to modify it to 'True' when it sang sweetly. Later on, I ended up moving that attribute to the Character class so that other enemies could be put to sleep with use of an item or other to-be-determined effects.
 
 Two problems that arose once we had that implemented were that 1) Jigglypuff would sing even after being killed by the Hero and 2) once put to sleep, the Hero would never wake up again. To resolve the first, we just needed to check if Jigglypuff still had health points before getting on the mic. As for the second, since eternal slumber wasn't the goal, we needed to make sure that the Hero woke up after missing his chance to attack, but before the next round had started. Later on, I went back and made it so the wake-up was random and not guaranteed in order to add more tension.
 
-_the 'speed' attribute'
+****_the 'speed' attribute'****
 
 
 ****
