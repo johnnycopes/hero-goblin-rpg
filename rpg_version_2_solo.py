@@ -32,8 +32,7 @@ class Character(object):
     def attack(self, enemy):
         if not self.alive():
             return
-        # changing this to 'if self.asleep:' makes both characters sleep no matter what. why? ########################## <----------------
-        if self.asleep == True:
+        if self.asleep:
             print "%s is asleep and can't attack this round" % self.name
             self.sleep_counter += 1
         else:
@@ -49,6 +48,9 @@ class Character(object):
         print "%s receives %d damage." % (self.name, points)
         if not self.alive():
             print "%s is dead." % self.name
+        if self.asleep == True and self.sleep_counter > 1:
+            self.asleep = False
+            print "%s wakes up!" % self.name
 
     def print_status(self):
         print "%s has %d health and %d power." % (self.name, self.health, self.power)
@@ -87,6 +89,9 @@ class Hero(Character):
         self.coins -= item.cost
         item.apply(hero)
 
+    def loot(self, enemy):
+        self.coins += enemy.coins
+
 
 # The baddies
 
@@ -96,6 +101,7 @@ class Goblin(Character):
         self.health = 6
         self.speed = 4
         self.power = 2
+        self.coins = 5
         super(Goblin, self).__init__()
 
 
@@ -105,6 +111,7 @@ class Harambe(Character):
         self.health = 15
         self.speed = 6
         self.power = 3
+        self.coins = 12
         super(Harambe, self).__init__()
 
     def attack(self, enemy):
@@ -122,15 +129,15 @@ class Harambe(Character):
 class Jigglypuff(Character):
     def __init__(self):
         self.name = 'Jigglypuff'
-        self.health = 7
+        self.health = 11
         self.speed = 3
         self.power = 1
+        self.coins = 6
         super(Jigglypuff, self).__init__()
 
     def attack(self, enemy):
         if not self.alive():
             return
-        print enemy.asleep
         if enemy.asleep == False:
             self.sing(enemy)
         super(Jigglypuff, self).attack(enemy)
@@ -151,6 +158,7 @@ class Medic(Character):
         self.health = 11
         self.speed = 4
         self.power = 2
+        self.coins = 7
         super(Medic, self).__init__()
 
     def receive_damage(self, points):
@@ -168,10 +176,11 @@ class Shadow(Character):
         self.health = 1
         self.speed = 9
         self.power = 1
+        self.coins = 5
         super(Shadow, self).__init__()
 
     def receive_damage(self, points):
-        evade = random.random() < 0.9
+        evade = random.random() < 0.8
         if evade:
             print "%s evades the attack!" % self.name
         else:
@@ -193,9 +202,10 @@ class Zombie(Character):
 class Wizard(Character):
     def __init__(self):
         self.name = 'Wizard'
-        self.health = 8
+        self.health = 13
         self.speed = 3
         self.power = 1
+        self.coins = 7
         super(Wizard, self).__init__()
 
     def attack(self, enemy):
@@ -216,10 +226,7 @@ class Battle(object):
         print "Hero faces the %s" % enemy.name
         print "====================="
         while hero.alive() and enemy.alive():
-            #
-            # hero.wake_up()
-            # enemy.wake_up()
-            time.sleep(2)
+            time.sleep(1.5)
 
             print "-----------------------"
             print "What do you want to do?"
@@ -232,7 +239,6 @@ class Battle(object):
             if input == 1:
                 if hero.faster(enemy):
                     hero.attack(enemy)
-
                 else:
                     enemy.attack(hero)
             elif input == 2:
@@ -250,6 +256,8 @@ class Battle(object):
 
         if hero.alive():
             print "You defeated the %s" % enemy.name
+            hero.loot(enemy)
+            "Hero collects %d coins from the spoils" % enemy.coins
             return True
         else:
             print "YOU LOSE!"
@@ -308,7 +316,7 @@ class Store(object):
 # Declarations and bird's eye view of game
 
 hero = Hero()
-enemies = [Jigglypuff(), Shadow(), Medic(), Goblin(), Wizard(), Harambe()]
+enemies = [Goblin(), Shadow(), Medic(), Jigglypuff(), Wizard(), Harambe()]
 battle_engine = Battle()
 shopping_engine = Store()
 
