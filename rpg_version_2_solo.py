@@ -278,13 +278,21 @@ class Battle(object):
 
 
 # Items for sale
+# ----------------------------- how to make the cost go up for sale each time item is purchased?
 
-class Armor(object):
-    cost = 10
-    name = 'armor'
+class OrangeJuice(object):
+    cost = 15
+    name = 'orange juice'
     def apply(self, hero):
         hero.armor += 1
         print "%s's armor increased to %d." % (hero.name, hero.armor)
+
+class BlueberrySmoothie(object):
+    cost = 10
+    name = 'blueberry smoothie'
+    def apply(self, hero):
+        hero.agility += 1
+        print "%s's agility increased to %d." % (hero.name, hero.agility)
 
 class Tonic(object):
     cost = 5
@@ -300,9 +308,9 @@ class SuperTonic(object):
         hero.health += 5
         print "%s's health increased to %d." % (hero.name, hero.health)
 
-class Sword(object):
+class ProteinShake(object):
     cost = 10
-    name = 'sword'
+    name = 'protein shake'
     def apply(self, hero):
         hero.power += 1
         print "%s's power increased to %d." % (hero.name, hero.power)
@@ -314,7 +322,7 @@ class Store(object):
     # If you define a variable in the scope of a class:
     # This is a class variable and you can access it like
     # Store.items => [Tonic, Sword]
-    items = [Tonic, SuperTonic, Sword, Armor]
+    items = [Tonic, SuperTonic, ProteinShake, BlueberrySmoothie, OrangeJuice]
     def do_shopping(self, hero):
         while True:
             print "====================="
