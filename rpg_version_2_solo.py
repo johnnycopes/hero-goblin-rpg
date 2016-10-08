@@ -104,7 +104,6 @@ class Goblin(Character):
         self.coins = 5
         super(Goblin, self).__init__()
 
-
 class Harambe(Character):
     def __init__(self):
         self.name = 'Harambe'
@@ -124,7 +123,6 @@ class Harambe(Character):
         if hyped_up:
             self.power /= 2
             self.speed /= 1.5
-
 
 class Jigglypuff(Character):
     def __init__(self):
@@ -271,6 +269,13 @@ class Tonic(object):
     name = 'tonic'
     def apply(self, character):
         character.health += 2
+        print "%s's health increased to %d." % (character.name, character.health)
+
+class SuperTonic(object):
+    cost = 10
+    name = 'supertonic'
+    def apply(self, character):
+        character.health += 5
         print "%s's health increased to %d." % (character.name, character.health)
 
 class Sword(object):
