@@ -9,6 +9,7 @@ import time
 
 class Character(object):
     def __init__(self):
+        self.armor = 0
         self.asleep = False
         self.sleep_counter = 0
 
@@ -43,14 +44,30 @@ class Character(object):
                 enemy.receive_damage(self.power)
         time.sleep(2)
 
+    def evade(self):
+        if self.agility > random.randint(1, 10):
+            return True
+        else:
+            return False
+
+    def calculate_damage(self, points):
+        if self.armor > points:
+            return 0
+        else:
+            return points - self.armor
+
     def receive_damage(self, points):
-        self.health -= points
-        print "%s receives %d damage." % (self.name, points)
-        if not self.alive():
-            print "%s is dead." % self.name
-        if self.asleep == True and self.sleep_counter > 1:
-            self.asleep = False
-            print "%s wakes up!" % self.name
+        if self.evade():
+            print "The %s dodged the attack!" % self.name
+        else:
+            damage = self.calculate_damage(points)
+            self.health -= damage
+            print "%s receives %d damage." % (self.name, damage)
+            if not self.alive():
+                print "%s is dead." % self.name
+            if self.asleep == True and self.sleep_counter > 1:
+                self.asleep = False
+                print "%s wakes up!" % self.name
 
     def print_status(self):
         print "%s has %d health and %d power." % (self.name, self.health, self.power)
@@ -64,6 +81,7 @@ class Hero(Character):
         self.health = 10
         self.power = 5
         self.speed = 5
+        self.agility = 1
         self.coins = 20
         super(Hero, self).__init__()
 
@@ -101,6 +119,7 @@ class Goblin(Character):
         self.health = 6
         self.speed = 4
         self.power = 2
+        self.agility = 1
         self.coins = 5
         super(Goblin, self).__init__()
 
@@ -109,6 +128,7 @@ class Harambe(Character):
         self.name = 'Harambe'
         self.health = 15
         self.speed = 6
+        self.agility = 2
         self.power = 3
         self.coins = 12
         super(Harambe, self).__init__()
@@ -129,7 +149,8 @@ class Jigglypuff(Character):
         self.name = 'Jigglypuff'
         self.health = 11
         self.speed = 3
-        self.power = 1
+        self.agility = 1
+        self.power = 2
         self.coins = 6
         super(Jigglypuff, self).__init__()
 
@@ -155,6 +176,7 @@ class Medic(Character):
         self.name = 'Medic'
         self.health = 11
         self.speed = 4
+        self.agility = 1
         self.power = 2
         self.coins = 7
         super(Medic, self).__init__()
@@ -167,28 +189,21 @@ class Medic(Character):
                 print "Medic recuperated 4 health points"
                 self.health += 2
 
-
 class Shadow(Character):
     def __init__(self):
         self.name = 'Shadow'
-        self.health = 1
+        self.health = 8
         self.speed = 9
-        self.power = 1
+        self.agility = 6
+        self.power = 2
         self.coins = 5
         super(Shadow, self).__init__()
-
-    def receive_damage(self, points):
-        evade = random.random() < 0.8
-        if evade:
-            print "%s evades the attack!" % self.name
-        else:
-            super(Shadow, self).receive_damage(points)
-
 
 class Zombie(Character):
     def __init__(self):
         self.name = 'Zombie'
         self.health = 4
+        self.agility = 0
         self.speed = 1
         self.power = 1
         super(Zombie, self).__init__()
@@ -196,13 +211,13 @@ class Zombie(Character):
     def alive(self):
         return True
 
-
 class Wizard(Character):
     def __init__(self):
         self.name = 'Wizard'
         self.health = 13
         self.speed = 3
-        self.power = 1
+        self.agility = 0
+        self.power = 2
         self.coins = 7
         super(Wizard, self).__init__()
 
@@ -264,25 +279,32 @@ class Battle(object):
 
 # Items for sale
 
+class Armor(object):
+    cost = 10
+    name = 'armor'
+    def apply(self, hero):
+        hero.armor += 1
+        print "%s's armor increased to %d." % (hero.name, hero.armor)
+
 class Tonic(object):
     cost = 5
     name = 'tonic'
-    def apply(self, character):
-        character.health += 2
-        print "%s's health increased to %d." % (character.name, character.health)
+    def apply(self, hero):
+        hero.health += 2
+        print "%s's health increased to %d." % (hero.name, hero.health)
 
 class SuperTonic(object):
     cost = 10
     name = 'supertonic'
-    def apply(self, character):
-        character.health += 5
-        print "%s's health increased to %d." % (character.name, character.health)
+    def apply(self, hero):
+        hero.health += 5
+        print "%s's health increased to %d." % (hero.name, hero.health)
 
 class Sword(object):
     cost = 10
     name = 'sword'
     def apply(self, hero):
-        hero.power += 2
+        hero.power += 1
         print "%s's power increased to %d." % (hero.name, hero.power)
 
 
@@ -292,7 +314,7 @@ class Store(object):
     # If you define a variable in the scope of a class:
     # This is a class variable and you can access it like
     # Store.items => [Tonic, Sword]
-    items = [Tonic, Sword]
+    items = [Tonic, SuperTonic, Sword, Armor]
     def do_shopping(self, hero):
         while True:
             print "====================="
