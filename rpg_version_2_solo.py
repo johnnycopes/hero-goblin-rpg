@@ -129,7 +129,7 @@ class Harambe(Character):
         self.health = 15
         self.speed = 6
         self.agility = 2
-        self.power = 3
+        self.power = 4
         self.coins = 12
         super(Harambe, self).__init__()
 
@@ -149,9 +149,9 @@ class Jigglypuff(Character):
         self.name = 'Jigglypuff'
         self.health = 11
         self.speed = 3
-        self.agility = 1
-        self.power = 2
-        self.coins = 6
+        self.agility = 2
+        self.power = 1
+        self.coins = 7
         super(Jigglypuff, self).__init__()
 
     def attack(self, enemy):
@@ -178,7 +178,7 @@ class Medic(Character):
         self.speed = 4
         self.agility = 1
         self.power = 2
-        self.coins = 7
+        self.coins = 8
         super(Medic, self).__init__()
 
     def receive_damage(self, points):
@@ -196,7 +196,7 @@ class Shadow(Character):
         self.speed = 9
         self.agility = 6
         self.power = 2
-        self.coins = 5
+        self.coins = 7
         super(Shadow, self).__init__()
 
 class Zombie(Character):
@@ -217,12 +217,12 @@ class Wizard(Character):
         self.health = 13
         self.speed = 3
         self.agility = 0
-        self.power = 2
-        self.coins = 7
+        self.power = 3
+        self.coins = 9
         super(Wizard, self).__init__()
 
     def attack(self, enemy):
-        swap_power = random.random() < 0.5
+        swap_power = random.random() < 0.4
         if swap_power:
             print "%s swaps power with %s during attack" % (self.name, enemy.name)
             self.power, enemy.power = enemy.power, self.power
